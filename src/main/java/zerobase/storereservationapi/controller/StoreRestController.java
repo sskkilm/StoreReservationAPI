@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.storereservationapi.dto.DeleteStore;
 import zerobase.storereservationapi.dto.RegisterStore;
+import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.service.StoreService;
 
@@ -44,5 +45,15 @@ public class StoreRestController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(storeService.deleteStore(id));
+    }
+
+    /**
+     * 매장 상세 정보 조회
+     */
+    @GetMapping("/stores/{id}")
+    public ResponseEntity<StoreDto> getStoreDetails(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(storeService.getStoreDetails(id));
     }
 }

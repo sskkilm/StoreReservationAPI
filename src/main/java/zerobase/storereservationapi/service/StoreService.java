@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.dto.DeleteStore;
 import zerobase.storereservationapi.dto.RegisterStore;
+import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.repository.StoreRepository;
 
@@ -56,5 +57,13 @@ public class StoreService {
         storeRepository.delete(store);
 
         return DeleteStore.Response.toDto(store);
+    }
+
+    public StoreDto getStoreDetails(Long id) {
+        // 조회하고자 하는 매장이 없을 경우 예외 처리
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+
+        return StoreDto.toDto(store);
     }
 }
