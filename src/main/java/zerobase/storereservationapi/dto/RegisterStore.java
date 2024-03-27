@@ -30,12 +30,14 @@ public class RegisterStore {
     @Getter
     @Builder
     public static class Response {
+        private Long id;
         private String name;
         private Location location;
         private String description;
 
         public static Response toDto(Store store) {
             return Response.builder()
+                    .id(store.getId())
                     .name(store.getName())
                     .location(store.getLocation())
                     .description(store.getDescription())
