@@ -23,4 +23,10 @@ public class Store extends BaseEntity {
     private Location location;
 
     private String description;
+
+    public void updateStore(String name, Location location, String description) {
+        this.name = name;
+        this.location = location;
+        this.description = description;
+    }
 }
