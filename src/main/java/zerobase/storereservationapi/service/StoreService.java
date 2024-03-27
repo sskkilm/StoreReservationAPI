@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.storereservationapi.domain.Store;
+import zerobase.storereservationapi.dto.DeleteStore;
 import zerobase.storereservationapi.dto.RegisterStore;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.repository.StoreRepository;
@@ -45,5 +46,15 @@ public class StoreService {
         }
 
         return UpdateStore.Response.toDto(store);
+    }
+
+    public DeleteStore.Response deleteStore(Long id) {
+        // 삭제하고자 하는 매장이 없을 경우 예외 처리
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+
+        storeRepository.delete(store);
+
+        return DeleteStore.Response.toDto(store);
     }
 }
