@@ -12,7 +12,6 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
 
-    @Transactional
     public RegisterStore.Response registerStore(RegisterStore.Request request) {
         if (storeRepository.existsByNameAndLocation(
                 request.getName(),
