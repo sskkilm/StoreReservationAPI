@@ -1,16 +1,20 @@
 package zerobase.storereservationapi.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import zerobase.storereservationapi.domain.Reservation;
 import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.dto.CreateReservation;
+import zerobase.storereservationapi.dto.ReservationDto;
 import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.StoreRepository;
 import zerobase.storereservationapi.type.ReservationType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +55,15 @@ public class ReservationService {
                         .reservationId(UUID.randomUUID().toString().replace("-", ""))
                         .build())
         );
+    }
+
+    public List<ReservationDto> getReservationList(Long storeId, LocalDate date) {
+        // 확인하고자 하는 매장이 없는 경우 예외 처리
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+
+        List<Reservation> reservationList = reservationRepository.findByStoreAndDate(store, date);
+
+        return reservationList.stream().map(ReservationDto::toDto).collect(Collectors.toList());
     }
 }
