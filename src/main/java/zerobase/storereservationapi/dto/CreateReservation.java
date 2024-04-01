@@ -1,6 +1,6 @@
 package zerobase.storereservationapi.dto;
 
-import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -19,12 +19,11 @@ public class CreateReservation {
         private Long storeId;
 
         @NotNull
-        @FutureOrPresent
+        @Future
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         private LocalDate date;
 
         @NotNull
-        @FutureOrPresent
         @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
         private LocalTime time;
 
