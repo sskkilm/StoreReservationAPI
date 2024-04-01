@@ -8,6 +8,7 @@ import zerobase.storereservationapi.domain.Reservation;
 import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.dto.CreateReservation;
 import zerobase.storereservationapi.dto.ReservationDto;
+import zerobase.storereservationapi.dto.VisitCheck;
 import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.StoreRepository;
 import zerobase.storereservationapi.type.ReservationType;
@@ -96,6 +97,27 @@ public class ReservationService {
         }
 
         reservation.updateReservationTypeToRefused();
+
+        return ReservationDto.toDto(reservation);
+    }
+
+    public ReservationDto visitCheck(VisitCheck.Request request) {
+        // 존재하지 않는 예약일 경우 예외 처리
+        Reservation reservation = reservationRepository.findByReservationId(request.getReservationId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+
+        // 승인된 예약이 아닐 경우 예외 처리
+        if (reservation.getReservationType() != ReservationType.APPROVED) {
+            throw new RuntimeException("승인된 예약이 아닙니다.");
+        }
+        // 예약 날짜가 일치하지 않는 경우 예외 처리
+        if (!request.getArrivalDate().equals(reservation.getDate())) {
+            throw new RuntimeException("예약 날짜가 일치하지 않습니다.");
+        }
+        // 예약 시간 10분 전에 도착하지 못한 경우 예외 처리
+        if (request.getArrivalTime().plusMinutes(10).isAfter(reservation.getTime())) {
+            throw new RuntimeException("도착 확인 시간이 지났습니다.");
+        }
 
         return ReservationDto.toDto(reservation);
     }

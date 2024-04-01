@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.storereservationapi.dto.CreateReservation;
 import zerobase.storereservationapi.dto.ReservationDto;
+import zerobase.storereservationapi.dto.VisitCheck;
 import zerobase.storereservationapi.service.ReservationService;
 
 import java.time.LocalDate;
@@ -60,5 +61,15 @@ public class ReservationRestController {
             @PathVariable String reservationId
     ) {
         return ResponseEntity.ok(reservationService.refuseReservation(reservationId));
+    }
+
+    /**
+     * 도착 확인
+     */
+    @GetMapping("/reservations/visit")
+    public ResponseEntity<?> visitCheck(
+            @RequestBody VisitCheck.Request request
+    ) {
+        return ResponseEntity.ok(reservationService.visitCheck(request));
     }
 }
