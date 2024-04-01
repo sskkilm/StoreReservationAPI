@@ -67,7 +67,7 @@ public class ReservationRestController {
      * 도착 확인
      */
     @GetMapping("/reservations/visit")
-    public ResponseEntity<?> visitCheck(
+    public ResponseEntity<ReservationDto> visitCheck(
             @RequestBody VisitCheck.Request request
     ) {
         return ResponseEntity.ok(reservationService.visitCheck(request));
