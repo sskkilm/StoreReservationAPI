@@ -22,6 +22,10 @@ public class ReviewService {
         // 존재하지 않는 예약일 경우 예외 처리
         Reservation reservation = reservationRepository.findByReservationId(request.getReservationId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+        // 이미 작성된 리뷰가 있는 경우 예외 처리
+        if (reviewRepository.existsByReservationId(reservation.getReservationId())) {
+            throw new RuntimeException("이미 리뷰가 존재합니다.");
+        }
         // 리뷰를 남기려는 예약이 승인된 예약이 아닐 경우 예외 처리
         if (reservation.getReservationType() != ReservationType.APPROVED) {
             throw new RuntimeException("리뷰 권한이 없습니다.");
@@ -29,6 +33,7 @@ public class ReviewService {
 
         Review review = Review.builder()
                 .store(reservation.getStore())
+                .reservationId(reservation.getReservationId())
                 .rating(request.getRating())
                 .message(request.getMessage())
                 .build();

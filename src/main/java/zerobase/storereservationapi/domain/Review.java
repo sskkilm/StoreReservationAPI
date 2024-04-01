@@ -19,6 +19,8 @@ public class Review extends BaseEntity {
     @ManyToOne
     private Store store;
 
+    private String reservationId;
+
     private Double rating;
 
     private String message;

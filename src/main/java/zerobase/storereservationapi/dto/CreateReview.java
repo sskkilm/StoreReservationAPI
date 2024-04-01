@@ -26,6 +26,7 @@ public class CreateReview {
         private Long id;
         private String storeName;
         private Location storeLocation;
+        private String reservationId;
         private Double rating;
         private String message;
 
@@ -34,6 +35,7 @@ public class CreateReview {
                     .id(review.getId())
                     .storeName(review.getStore().getName())
                     .storeLocation(review.getStore().getLocation())
+                    .reservationId(review.getReservationId())
                     .rating(review.getRating())
                     .message(review.getMessage())
                     .build();
