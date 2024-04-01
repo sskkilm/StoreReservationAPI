@@ -1,10 +1,12 @@
 package zerobase.storereservationapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zerobase.storereservationapi.domain.Reservation;
 import zerobase.storereservationapi.domain.Review;
 import zerobase.storereservationapi.dto.CreateReview;
+import zerobase.storereservationapi.dto.UpdateReview;
 import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.ReviewRepository;
 import zerobase.storereservationapi.type.ReservationType;
@@ -32,5 +34,16 @@ public class ReviewService {
                 .build();
 
         return CreateReview.Response.toDto(reviewRepository.save(review));
+    }
+
+    @Transactional
+    public UpdateReview.Response updateReview(Long id, UpdateReview.Request request) {
+        // 리뷰가 존재하지 않을 경우 예외 처리
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
+
+        review.updateRatingAndMessage(request.getRating(), request.getMessage());
+
+        return UpdateReview.Response.toDto(review);
     }
 }

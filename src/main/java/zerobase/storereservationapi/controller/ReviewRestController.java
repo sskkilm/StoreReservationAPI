@@ -2,11 +2,9 @@ package zerobase.storereservationapi.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zerobase.storereservationapi.dto.CreateReview;
+import zerobase.storereservationapi.dto.UpdateReview;
 import zerobase.storereservationapi.service.ReviewService;
 
 @RestController
@@ -23,5 +21,16 @@ public class ReviewRestController {
             @RequestBody CreateReview.Request request
     ) {
         return ResponseEntity.ok(reviewService.createReview(request));
+    }
+
+    /**
+     * 리뷰 수정
+     */
+    @PutMapping("/reviews/{id}")
+    public ResponseEntity<?> updateReview(
+            @PathVariable Long id,
+            @RequestBody UpdateReview.Request request
+    ) {
+        return ResponseEntity.ok(reviewService.updateReview(id, request));
     }
 }

@@ -22,4 +22,9 @@ public class Review extends BaseEntity {
     private Double rating;
 
     private String message;
+
+    public void updateRatingAndMessage(Double rating, String message) {
+        this.rating = rating;
+        this.message = message;
+    }
 }
