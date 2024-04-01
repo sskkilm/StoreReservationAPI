@@ -34,4 +34,8 @@ public class Reservation extends BaseEntity {
     private String phoneNumber;
 
     private String reservationId;
+
+    public void updateReservationTypeToApproved() {
+        this.reservationType = ReservationType.APPROVED;
+    }
 }

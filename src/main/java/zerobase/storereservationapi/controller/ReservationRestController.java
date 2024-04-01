@@ -20,6 +20,7 @@ public class ReservationRestController {
 
     /**
      * 예약 요청
+     *
      * @param request
      * @return
      */
@@ -39,5 +40,15 @@ public class ReservationRestController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         return ResponseEntity.ok(reservationService.getReservationList(storeId, date));
+    }
+
+    /**
+     * 예약 승인
+     */
+    @PatchMapping("/reservations/approve/{reservationId}")
+    public ResponseEntity<ReservationDto> approveReservation(
+            @PathVariable String reservationId
+    ) {
+        return ResponseEntity.ok(reservationService.approveReservation(reservationId));
     }
 }

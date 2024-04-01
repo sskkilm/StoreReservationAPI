@@ -1,5 +1,6 @@
 package zerobase.storereservationapi.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,5 +66,21 @@ public class ReservationService {
         List<Reservation> reservationList = reservationRepository.findByStoreAndDate(store, date);
 
         return reservationList.stream().map(ReservationDto::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ReservationDto approveReservation(String reservationId) {
+        // 존재하지 않는 예약일 경우 예외 처리
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+
+        // 이미 처리된 예약일 경우 예외 처리
+        if (reservation.getReservationType() != ReservationType.WAITING) {
+            throw new RuntimeException("이미 처리된 예약입니다.");
+        }
+
+        reservation.updateReservationTypeToApproved();
+
+        return ReservationDto.toDto(reservation);
     }
 }
