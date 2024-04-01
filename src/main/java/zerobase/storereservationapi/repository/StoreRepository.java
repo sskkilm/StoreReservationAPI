@@ -5,9 +5,11 @@ import org.springframework.stereotype.Repository;
 import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.embedded.Location;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
     boolean existsByNameAndLocation(String name, Location location);
+
+    List<Store> findAllByOrderByName();
 }

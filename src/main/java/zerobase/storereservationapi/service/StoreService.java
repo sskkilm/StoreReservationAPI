@@ -10,6 +10,7 @@ import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.repository.StoreRepository;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -67,5 +68,10 @@ public class StoreService {
                 .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
 
         return StoreDto.toDto(store);
+    }
+
+    public List<StoreDto> getStoreListOrderByAlphabet() {
+        return storeRepository.findAllByOrderByName().stream()
+                .map(StoreDto::toDto).toList();
     }
 }

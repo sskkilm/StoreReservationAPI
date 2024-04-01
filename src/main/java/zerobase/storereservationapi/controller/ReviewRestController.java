@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.storereservationapi.dto.CreateReview;
+import zerobase.storereservationapi.dto.DeleteReview;
 import zerobase.storereservationapi.dto.UpdateReview;
 import zerobase.storereservationapi.service.ReviewService;
 
@@ -38,7 +39,7 @@ public class ReviewRestController {
      * 리뷰 삭제
      */
     @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<?> deleteReview(
+    public ResponseEntity<DeleteReview.Response> deleteReview(
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(reviewService.deleteReview(id));

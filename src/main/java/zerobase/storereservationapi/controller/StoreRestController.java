@@ -10,6 +10,8 @@ import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.service.StoreService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class StoreRestController {
@@ -55,5 +57,13 @@ public class StoreRestController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(storeService.getStoreDetails(id));
+    }
+
+    /**
+     * 매장 목록 조회 (가나다순)
+     */
+    @GetMapping("/stores/alphabet")
+    public ResponseEntity<List<StoreDto>> getStoreListOrderByAlphabet() {
+        return ResponseEntity.ok(storeService.getStoreListOrderByAlphabet());
     }
 }
