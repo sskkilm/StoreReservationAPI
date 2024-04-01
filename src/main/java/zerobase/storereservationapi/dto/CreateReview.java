@@ -23,6 +23,7 @@ public class CreateReview {
     @Getter
     @Builder
     public static class Response{
+        private Long id;
         private String storeName;
         private Location storeLocation;
         private Double rating;
@@ -30,6 +31,7 @@ public class CreateReview {
 
         public static Response toDto(Review review) {
             return Response.builder()
+                    .id(review.getId())
                     .storeName(review.getStore().getName())
                     .storeLocation(review.getStore().getLocation())
                     .rating(review.getRating())
