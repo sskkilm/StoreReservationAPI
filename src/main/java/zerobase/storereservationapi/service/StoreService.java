@@ -10,6 +10,8 @@ import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
 import zerobase.storereservationapi.repository.StoreRepository;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -36,15 +38,15 @@ public class StoreService {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
 
-        store.updateStore(request.getName(), request.getLocation(), request.getDescription());
-
-        // 수정한 매장과 동일한 매장이 존재하는 경우 예외 처리
+        // 요청된 매장 이름과 위치가 동일한 매장이 이미 존재하는 경우 예외 처리
         if (storeRepository.existsByNameAndLocation(
-                store.getName(),
-                store.getLocation()
+                request.getName(),
+                request.getLocation()
         )) {
             throw new RuntimeException("이미 존재하는 매장입니다.");
         }
+
+        store.updateStore(request.getName(), request.getLocation(), request.getDescription());
 
         return UpdateStore.Response.toDto(store);
     }
