@@ -51,4 +51,14 @@ public class ReservationRestController {
     ) {
         return ResponseEntity.ok(reservationService.approveReservation(reservationId));
     }
+
+    /**
+     * 예약 거절
+     */
+    @PatchMapping("/reservations/refuse/{reservationId}")
+    public ResponseEntity<ReservationDto> refuseReservation(
+            @PathVariable String reservationId
+    ) {
+        return ResponseEntity.ok(reservationService.refuseReservation(reservationId));
+    }
 }

@@ -38,4 +38,8 @@ public class Reservation extends BaseEntity {
     public void updateReservationTypeToApproved() {
         this.reservationType = ReservationType.APPROVED;
     }
+
+    public void updateReservationTypeToRefused() {
+        this.reservationType = ReservationType.REFUSED;
+    }
 }
