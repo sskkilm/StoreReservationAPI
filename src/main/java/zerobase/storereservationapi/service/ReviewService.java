@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import zerobase.storereservationapi.domain.Reservation;
 import zerobase.storereservationapi.domain.Review;
 import zerobase.storereservationapi.dto.CreateReview;
+import zerobase.storereservationapi.dto.DeleteReview;
 import zerobase.storereservationapi.dto.UpdateReview;
 import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.ReviewRepository;
@@ -50,5 +51,15 @@ public class ReviewService {
         review.updateRatingAndMessage(request.getRating(), request.getMessage());
 
         return UpdateReview.Response.toDto(review);
+    }
+
+    public DeleteReview.Response deleteReview(Long id) {
+        // 리뷰가 존재하지 않을 경우 예외 처리
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
+
+        reviewRepository.delete(review);
+
+        return DeleteReview.Response.toDto(review);
     }
 }

@@ -27,10 +27,20 @@ public class ReviewRestController {
      * 리뷰 수정
      */
     @PutMapping("/reviews/{id}")
-    public ResponseEntity<?> updateReview(
+    public ResponseEntity<UpdateReview.Response> updateReview(
             @PathVariable Long id,
             @RequestBody UpdateReview.Request request
     ) {
         return ResponseEntity.ok(reviewService.updateReview(id, request));
+    }
+
+    /**
+     * 리뷰 삭제
+     */
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<?> deleteReview(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(reviewService.deleteReview(id));
     }
 }
