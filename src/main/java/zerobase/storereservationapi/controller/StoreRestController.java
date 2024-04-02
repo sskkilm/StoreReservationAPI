@@ -66,4 +66,15 @@ public class StoreRestController {
     public ResponseEntity<List<StoreDto>> getStoreListOrderByAlphabet() {
         return ResponseEntity.ok(storeService.getStoreListOrderByAlphabet());
     }
+
+    /**
+     * 매장 목록 조회 (거리순)
+     */
+    @GetMapping("/stores/distance")
+    public ResponseEntity<List<StoreDto>> getStoreListOrderByDistance(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude
+    ) {
+        return ResponseEntity.ok(storeService.getStoreListOrderByDistance(latitude, longitude));
+    }
 }

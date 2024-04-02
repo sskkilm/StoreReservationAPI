@@ -8,10 +8,10 @@ import zerobase.storereservationapi.dto.DeleteStore;
 import zerobase.storereservationapi.dto.RegisterStore;
 import zerobase.storereservationapi.dto.StoreDto;
 import zerobase.storereservationapi.dto.UpdateStore;
+import zerobase.storereservationapi.embedded.Location;
 import zerobase.storereservationapi.repository.StoreRepository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +73,50 @@ public class StoreService {
     public List<StoreDto> getStoreListOrderByAlphabet() {
         return storeRepository.findAllByOrderByName().stream()
                 .map(StoreDto::toDto).toList();
+    }
+
+    public List<StoreDto> getStoreListOrderByDistance(Double latitude, Double longitude) {
+        List<Store> storeList = storeRepository.findAll();
+
+        return storeList.stream().sorted((o1, o2) -> {
+            // 두 지점의 거리차를 기준으로 오름차순 정렬
+            Double distDiff = getDistanceDifference(o1.getLocation(), o2.getLocation(), latitude, longitude);
+            if (distDiff < 0) {
+                return -1;
+            } else if (distDiff == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }).map(StoreDto::toDto).toList();
+    }
+
+    private Double getDistanceDifference(Location o1, Location o2, Double latitude, Double longitude) {
+        // 두 지점의 거리 차 계산
+        return calculateDistance(o1.getLatitude(), o1.getLongitude(), latitude, longitude)
+                - calculateDistance(o2.getLatitude(), o2.getLongitude(), latitude, longitude);
+    }
+
+    private Double calculateDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
+        // 위도 및 경도를 라디안으로 변환
+        double radLat1 = toRadians(lat1);
+        double radLon1 = toRadians(lon1);
+        double radLat2 = toRadians(lat2);
+        double radLon2 = toRadians(lon2);
+
+        // 위도 차이와 경도 차이 계산
+        double deltaLat = radLat2 - radLat1;
+        double deltaLon = radLon2 - radLon1;
+
+        // Haversine 공식을 사용하여 거리 계산
+        double a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // 결과값 반환 (지구 반지름 = 6371) (단위: km)
+        return 6371 * c;
+    }
+
+    private Double toRadians(Double value) {
+        return Math.toRadians(value);
     }
 }
