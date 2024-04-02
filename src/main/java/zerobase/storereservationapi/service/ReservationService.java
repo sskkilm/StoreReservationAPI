@@ -2,7 +2,6 @@ package zerobase.storereservationapi.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import zerobase.storereservationapi.domain.Reservation;
 import zerobase.storereservationapi.domain.Store;

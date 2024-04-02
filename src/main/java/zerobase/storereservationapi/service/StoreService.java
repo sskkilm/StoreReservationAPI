@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.storereservationapi.domain.Store;
-import zerobase.storereservationapi.dto.DeleteStore;
-import zerobase.storereservationapi.dto.RegisterStore;
-import zerobase.storereservationapi.dto.StoreDto;
-import zerobase.storereservationapi.dto.UpdateStore;
+import zerobase.storereservationapi.dto.*;
 import zerobase.storereservationapi.embedded.Location;
 import zerobase.storereservationapi.repository.StoreRepository;
 
@@ -118,5 +115,28 @@ public class StoreService {
 
     private Double toRadians(Double value) {
         return Math.toRadians(value);
+    }
+
+    public List<StoreRatingDto> getStoreListOrderByRating() {
+        List<Store> storeList = storeRepository.findAll();
+
+        // 별점 순으로 내림차순 정렬 (별점 높은 순 정렬)
+        return storeList.stream().sorted((o1, o2) -> {
+            Double rating1 = o1.getRatingSum() / o1.getReviewCount();
+            Double rating2 = o2.getRatingSum() / o2.getReviewCount();
+            if (rating1 - rating2 < 0) {
+                return 1;
+            } else if (rating1 - rating2 == 0) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }).map(e -> StoreRatingDto.builder()
+                .rating(Double.parseDouble(String.format("%.2f", e.getRatingSum() / e.getReviewCount())))
+                .name(e.getName())
+                .location(e.getLocation())
+                .build()
+        ).toList();
+
     }
 }

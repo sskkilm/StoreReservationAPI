@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import zerobase.storereservationapi.dto.DeleteStore;
-import zerobase.storereservationapi.dto.RegisterStore;
-import zerobase.storereservationapi.dto.StoreDto;
-import zerobase.storereservationapi.dto.UpdateStore;
+import zerobase.storereservationapi.dto.*;
 import zerobase.storereservationapi.service.StoreService;
 
 import java.util.List;
@@ -76,5 +73,13 @@ public class StoreRestController {
             @RequestParam Double longitude
     ) {
         return ResponseEntity.ok(storeService.getStoreListOrderByDistance(latitude, longitude));
+    }
+
+    /**
+     * 매장 목록 조회 (별점순)
+     */
+    @GetMapping("/stores/rating")
+    public ResponseEntity<List<StoreRatingDto>> getStoreListOrderByRating() {
+        return ResponseEntity.ok(storeService.getStoreListOrderByRating());
     }
 }

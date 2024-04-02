@@ -1,7 +1,5 @@
 package zerobase.storereservationapi.dto;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import zerobase.storereservationapi.domain.Store;

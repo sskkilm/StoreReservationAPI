@@ -23,6 +23,8 @@ public class RegisterStore {
                     .name(request.getName())
                     .location(request.getLocation())
                     .description(request.getDescription())
+                    .ratingSum(0.0)
+                    .reviewCount(0)
                     .build();
         }
     }
