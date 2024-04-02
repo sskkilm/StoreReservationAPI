@@ -12,6 +12,9 @@ import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.ReviewRepository;
 import zerobase.storereservationapi.type.ReservationType;
 
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -19,6 +22,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
 
+    @Transactional
     public CreateReview.Response createReview(CreateReview.Request request) {
         // 존재하지 않는 예약일 경우 예외 처리
         Reservation reservation = reservationRepository.findByReservationId(request.getReservationId())
@@ -38,6 +42,9 @@ public class ReviewService {
                 .rating(request.getRating())
                 .message(request.getMessage())
                 .build();
+        
+        // 매장 리뷰 리스트에 리뷰 추가
+        reservation.getStore().addReview(review);
 
         return CreateReview.Response.toDto(reviewRepository.save(review));
     }
@@ -50,15 +57,34 @@ public class ReviewService {
 
         review.updateRatingAndMessage(request.getRating(), request.getMessage());
 
+        // 매장 리뷰 리스트에 리뷰 수정
+        List<Review> reviewList = review.getStore().getReviewList();
+        for (int i = 0; i < reviewList.size(); i++) {
+            if (Objects.equals(reviewList.get(i).getId(), review.getId())) {
+                reviewList.set(i, review);
+                break;
+            }
+        }
+
         return UpdateReview.Response.toDto(review);
     }
 
+    @Transactional
     public DeleteReview.Response deleteReview(Long id) {
         // 리뷰가 존재하지 않을 경우 예외 처리
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
 
         reviewRepository.delete(review);
+
+        // 매장 리뷰 리스트에 리뷰 삭제
+        List<Review> reviewList = review.getStore().getReviewList();
+        for (int i = 0; i < reviewList.size(); i++) {
+            if (Objects.equals(reviewList.get(i).getId(), review.getId())) {
+                reviewList.remove(i);
+                break;
+            }
+        }
 
         return DeleteReview.Response.toDto(review);
     }
