@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import zerobase.storereservationapi.embedded.Location;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +22,9 @@ public class Store extends BaseEntity {
     @Embedded
     private Location location;
 
-    @OneToMany(mappedBy = "store")
-    private List<Review> reviewList = new ArrayList<>();
+    private Double ratingSum;
+
+    private Integer reviewCount;
 
     private String description;
 
@@ -36,7 +34,13 @@ public class Store extends BaseEntity {
         this.description = description;
     }
 
-    public void addReview(Review review) {
-        this.reviewList.add(review);
+    public void plusRating(Double rating) {
+        this.ratingSum += rating;
+        this.reviewCount++;
+    }
+
+    public void minusRating(Double rating) {
+        this.ratingSum -= rating;
+        this.reviewCount--;
     }
 }
