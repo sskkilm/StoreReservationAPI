@@ -12,9 +12,6 @@ import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.ReviewRepository;
 import zerobase.storereservationapi.type.ReservationType;
 
-import java.util.List;
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -42,9 +39,9 @@ public class ReviewService {
                 .rating(request.getRating())
                 .message(request.getMessage())
                 .build();
-        
-        // 매장 리뷰 리스트에 리뷰 추가
-        reservation.getStore().addReview(review);
+
+        // 매장 별점 합 업데이트
+        reservation.getStore().plusRating(request.getRating());
 
         return CreateReview.Response.toDto(reviewRepository.save(review));
     }
@@ -55,16 +52,13 @@ public class ReviewService {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 리뷰입니다."));
 
+        // 매장 별점 합 업데이트
+        review.getStore().minusRating(review.getRating());
+
         review.updateRatingAndMessage(request.getRating(), request.getMessage());
 
-        // 매장 리뷰 리스트에 리뷰 수정
-        List<Review> reviewList = review.getStore().getReviewList();
-        for (int i = 0; i < reviewList.size(); i++) {
-            if (Objects.equals(reviewList.get(i).getId(), review.getId())) {
-                reviewList.set(i, review);
-                break;
-            }
-        }
+        // 매장 별점 합 업데이트
+        review.getStore().plusRating(request.getRating());
 
         return UpdateReview.Response.toDto(review);
     }
@@ -77,14 +71,8 @@ public class ReviewService {
 
         reviewRepository.delete(review);
 
-        // 매장 리뷰 리스트에 리뷰 삭제
-        List<Review> reviewList = review.getStore().getReviewList();
-        for (int i = 0; i < reviewList.size(); i++) {
-            if (Objects.equals(reviewList.get(i).getId(), review.getId())) {
-                reviewList.remove(i);
-                break;
-            }
-        }
+        // 매장 별점 합 업데이트
+        review.getStore().minusRating(review.getRating());
 
         return DeleteReview.Response.toDto(review);
     }
