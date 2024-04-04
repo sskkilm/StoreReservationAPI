@@ -1,5 +1,6 @@
 package zerobase.storereservationapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ReviewRestController {
      */
     @PostMapping("/reviews")
     public ResponseEntity<CreateReview.Response> createReview(
-            @RequestBody CreateReview.Request request
+            @RequestBody @Valid CreateReview.Request request
     ) {
         return ResponseEntity.ok(reviewService.createReview(request));
     }
@@ -30,7 +31,7 @@ public class ReviewRestController {
     @PutMapping("/reviews/{id}")
     public ResponseEntity<UpdateReview.Response> updateReview(
             @PathVariable Long id,
-            @RequestBody UpdateReview.Request request
+            @RequestBody @Valid UpdateReview.Request request
     ) {
         return ResponseEntity.ok(reviewService.updateReview(id, request));
     }

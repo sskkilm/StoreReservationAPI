@@ -6,9 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.dto.*;
 import zerobase.storereservationapi.embedded.Location;
+import zerobase.storereservationapi.exception.CustomException;
 import zerobase.storereservationapi.repository.StoreRepository;
 
 import java.util.List;
+
+import static zerobase.storereservationapi.type.ErrorCode.AlREADY_EXIST_STORE;
+import static zerobase.storereservationapi.type.ErrorCode.STORE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,7 @@ public class StoreService {
                 request.getName(),
                 request.getLocation()
         )) {
-            throw new RuntimeException("이미 존재하는 매장입니다.");
+            throw new CustomException(AlREADY_EXIST_STORE);
         }
 
         return RegisterStore.Response.toDto(
@@ -34,14 +38,14 @@ public class StoreService {
     public UpdateStore.Response updateStore(Long id, UpdateStore.Request request) {
         // 수정하고자 하는 매장이 없을 경우 예외 처리
         Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         // 요청된 매장 이름과 위치가 동일한 매장이 이미 존재하는 경우 예외 처리
         if (storeRepository.existsByNameAndLocation(
                 request.getName(),
                 request.getLocation()
         )) {
-            throw new RuntimeException("이미 존재하는 매장입니다.");
+            throw new CustomException(AlREADY_EXIST_STORE);
         }
 
         store.updateStore(request.getName(), request.getLocation(), request.getDescription());
@@ -52,7 +56,7 @@ public class StoreService {
     public DeleteStore.Response deleteStore(Long id) {
         // 삭제하고자 하는 매장이 없을 경우 예외 처리
         Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         storeRepository.delete(store);
 
@@ -62,7 +66,7 @@ public class StoreService {
     public StoreDto getStoreDetails(Long id) {
         // 조회하고자 하는 매장이 없을 경우 예외 처리
         Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         return StoreDto.toDto(store);
     }

@@ -1,5 +1,6 @@
 package zerobase.storereservationapi.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class AuthRestController {
      */
     @PostMapping("/signup/general")
     public ResponseEntity<UserDto> generalSignUp(
-            @RequestBody SignUp request
+            @RequestBody @Valid SignUp request
     ) {
         return ResponseEntity.ok(customUserDetailsService.generalSignUp(request));
     }
@@ -33,7 +34,7 @@ public class AuthRestController {
      */
     @PostMapping("/signup/partner")
     public ResponseEntity<UserDto> partnerSignUp(
-            @RequestBody SignUp request
+            @RequestBody @Valid SignUp request
     ) {
         return ResponseEntity.ok(customUserDetailsService.partnerSignUp(request));
     }
@@ -43,7 +44,7 @@ public class AuthRestController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody Login request
+            @RequestBody @Valid Login request
     ) {
         UserDto userDto = customUserDetailsService.authenticate(request);
         String token = tokenProvider.generateToken(userDto.getUsername(), userDto.getRole());

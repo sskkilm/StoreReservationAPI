@@ -10,7 +10,10 @@ import zerobase.storereservationapi.domain.UserEntity;
 import zerobase.storereservationapi.dto.Login;
 import zerobase.storereservationapi.dto.SignUp;
 import zerobase.storereservationapi.dto.UserDto;
+import zerobase.storereservationapi.exception.CustomException;
 import zerobase.storereservationapi.repository.UserRepository;
+
+import static zerobase.storereservationapi.type.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +25,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
     }
 
     public UserDto generalSignUp(SignUp request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("이미 존재하는 유저입니다.");
+            throw new CustomException(AlREADY_EXIST_USER);
         }
 
         UserEntity userEntity = UserEntity.builder()
@@ -42,7 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDto partnerSignUp(SignUp request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("이미 존재하는 유저입니다.");
+            throw new CustomException(AlREADY_EXIST_USER);
         }
 
         UserEntity userEntity = UserEntity.builder()
@@ -56,10 +59,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDto authenticate(Login request) {
         UserEntity userEntity = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), userEntity.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(PASSWORD_UN_MATCH);
         }
 
         return UserDto.toDto(userEntity);

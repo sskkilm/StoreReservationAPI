@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,6 +16,7 @@ import zerobase.storereservationapi.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter authenticationFilter;
@@ -38,8 +40,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/signup/**", "/login").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
+                        //.requestMatchers("/signup/**", "/login").permitAll()
+                        //.anyRequest().authenticated())
                 //JWTFilter 등록
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 //세션 설정

@@ -8,6 +8,7 @@ import zerobase.storereservationapi.domain.Store;
 import zerobase.storereservationapi.dto.CreateReservation;
 import zerobase.storereservationapi.dto.ReservationDto;
 import zerobase.storereservationapi.dto.VisitCheck;
+import zerobase.storereservationapi.exception.CustomException;
 import zerobase.storereservationapi.repository.ReservationRepository;
 import zerobase.storereservationapi.repository.StoreRepository;
 import zerobase.storereservationapi.type.ReservationType;
@@ -16,6 +17,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static zerobase.storereservationapi.type.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class ReservationService {
     public CreateReservation.Response createReservation(CreateReservation.Request request) {
         // 예약하고자 하는 식당이 없는 경우 예외 처리
         Store store = storeRepository.findById(request.getStoreId())
-                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         // 매장 이용 시간 2시간으로 제한
         // 요청으로 들어온 시간 기준 2시간 전후 내에 승인된 예약이 이미 있을 경우 예외 처리
@@ -37,12 +40,12 @@ public class ReservationService {
                     reservation.getTime().isBefore(request.getTime()) &&
                     !reservation.getTime().plusHours(2).isBefore(request.getTime())
             ) {
-                throw new RuntimeException("이미 예약된 시간입니다.");
+                throw new CustomException(ALREADY_RESERVED);
             } else if (reservation.getReservationType() == ReservationType.APPROVED &&
                     reservation.getTime().isAfter(request.getTime()) &&
                     !reservation.getTime().minusHours(2).isAfter(request.getTime())
             ) {
-                throw new RuntimeException("이미 예약된 시간입니다.");
+                throw new CustomException(ALREADY_RESERVED);
             }
         }
 
@@ -61,7 +64,7 @@ public class ReservationService {
     public List<ReservationDto> getReservationList(Long storeId, LocalDate date) {
         // 확인하고자 하는 매장이 없는 경우 예외 처리
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new RuntimeException("없는 매장입니다."));
+                .orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
 
         List<Reservation> reservationList = reservationRepository.findByStoreAndDate(store, date);
 
@@ -72,11 +75,11 @@ public class ReservationService {
     public ReservationDto approveReservation(String reservationId) {
         // 존재하지 않는 예약일 경우 예외 처리
         Reservation reservation = reservationRepository.findByReservationId(reservationId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
         // 이미 처리된 예약일 경우 예외 처리
         if (reservation.getReservationType() != ReservationType.WAITING) {
-            throw new RuntimeException("이미 처리된 예약입니다.");
+            throw new CustomException(RESERVATION_ALREADY_PROCESSED);
         }
 
         reservation.updateReservationTypeToApproved();
@@ -88,11 +91,11 @@ public class ReservationService {
     public ReservationDto refuseReservation(String reservationId) {
         // 존재하지 않는 예약일 경우 예외 처리
         Reservation reservation = reservationRepository.findByReservationId(reservationId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
         // 이미 처리된 예약일 경우 예외 처리
         if (reservation.getReservationType() != ReservationType.WAITING) {
-            throw new RuntimeException("이미 처리된 예약입니다.");
+            throw new CustomException(RESERVATION_ALREADY_PROCESSED);
         }
 
         reservation.updateReservationTypeToRefused();
@@ -103,19 +106,19 @@ public class ReservationService {
     public ReservationDto visitCheck(VisitCheck.Request request) {
         // 존재하지 않는 예약일 경우 예외 처리
         Reservation reservation = reservationRepository.findByReservationId(request.getReservationId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 예약입니다."));
+                .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
 
         // 승인된 예약이 아닐 경우 예외 처리
         if (reservation.getReservationType() != ReservationType.APPROVED) {
-            throw new RuntimeException("승인된 예약이 아닙니다.");
+            throw new CustomException(RESERVATION_NOT_APPROVED);
         }
         // 예약 날짜가 일치하지 않는 경우 예외 처리
         if (!request.getArrivalDate().equals(reservation.getDate())) {
-            throw new RuntimeException("예약 날짜가 일치하지 않습니다.");
+            throw new CustomException(RESERVATION_DATE_UN_MATCH);
         }
         // 예약 시간 10분 전에 도착하지 못한 경우 예외 처리
         if (request.getArrivalTime().plusMinutes(10).isAfter(reservation.getTime())) {
-            throw new RuntimeException("도착 확인 시간이 지났습니다.");
+            throw new CustomException(ARRIVAL_TIME_HAS_PASSED);
         }
 
         return ReservationDto.toDto(reservation);
