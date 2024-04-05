@@ -1,8 +1,5 @@
 package zerobase.storereservationapi.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,11 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import zerobase.storereservationapi.dto.ErrorResponse;
 import zerobase.storereservationapi.exception.CustomException;
-import zerobase.storereservationapi.type.ErrorCode;
 
 import java.io.IOException;
-
-import static zerobase.storereservationapi.type.ErrorCode.*;
 
 @Component
 public class ExceptionHandlerFilter extends OncePerRequestFilter {

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+    ACCESS_DENIED("접근 권한이 없습니다."),
+
     INVALID_TOKEN_SIGNATURE("잘못된 JWT 서명입니다."),
     EXPIRED_TOKEN("만료된 JWT 토큰입니다."),
     NOT_SUPPORTED_TOKEN("지원되지 않는 JWT 토큰 입니다."),

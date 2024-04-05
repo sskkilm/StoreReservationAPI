@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll())
                 //JWTFilter 등록
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //JWT 예외 핸들러 filter 등록
                 .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 //세션 설정
                 .sessionManagement((session) -> session
