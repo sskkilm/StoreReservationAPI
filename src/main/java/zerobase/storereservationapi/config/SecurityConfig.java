@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import zerobase.storereservationapi.jwt.ExceptionHandlerFilter;
 import zerobase.storereservationapi.jwt.JwtAuthenticationFilter;
 
 @Configuration
@@ -20,6 +21,7 @@ import zerobase.storereservationapi.jwt.JwtAuthenticationFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter authenticationFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -40,11 +42,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 //경로별 인가 작업
                 .authorizeHttpRequests((auth) -> auth
+                        // 메소드 단위로 보안 수준 설정할 것이기 때문에 권한은 기본적으로 모두 허용
                         .anyRequest().permitAll())
-                        //.requestMatchers("/signup/**", "/login").permitAll()
-                        //.anyRequest().authenticated())
                 //JWTFilter 등록
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 //세션 설정
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

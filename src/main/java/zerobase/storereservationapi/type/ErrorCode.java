@@ -7,6 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+    INVALID_TOKEN_SIGNATURE("잘못된 JWT 서명입니다."),
+    EXPIRED_TOKEN("만료된 JWT 토큰입니다."),
+    NOT_SUPPORTED_TOKEN("지원되지 않는 JWT 토큰 입니다."),
+    INVALID_TOKEN("JWT 토큰이 잘못되었습니다."),
+
     INTERNAL_SERVER_ERROR("내부 서버 오류가 발생했습니다."),
     INVALID_REQUEST("잘못된 요청입니다."),
 

@@ -20,23 +20,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-
         return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse handleHttpMessageNotReadableException(Exception e) {
-
-        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getMessage()
-        );
+        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleException(Exception e) {
-        log.error("Exception is occurred.", e);
-
-        return new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getMessage()
-        );
+        return new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getMessage());
     }
 
 }

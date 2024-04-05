@@ -1,21 +1,26 @@
 package zerobase.storereservationapi.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import zerobase.storereservationapi.exception.CustomException;
 import zerobase.storereservationapi.service.CustomUserDetailsService;
+import zerobase.storereservationapi.type.ErrorCode;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import static zerobase.storereservationapi.type.ErrorCode.*;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TokenProvider {
@@ -59,11 +64,17 @@ public class TokenProvider {
     }
 
     public boolean validateToken(String token) {
-        if (!StringUtils.hasText(token)) {
-            return false;
+        try {
+            return !this.parseClaims(token).getExpiration().before(new Date());
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new CustomException(INVALID_TOKEN_SIGNATURE);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(EXPIRED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new CustomException(NOT_SUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(INVALID_TOKEN);
         }
-
-        return !this.parseClaims(token).getExpiration().before(new Date());
     }
 
     private Claims parseClaims(String token) {
